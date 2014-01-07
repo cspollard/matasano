@@ -11,7 +11,7 @@ freqs m = M.map (\i -> fromIntegral i/tot) m
     where tot = fromIntegral . sum $ M.elems m
 
 charCounts :: String -> M.Map Char Int
-charCounts = foldl (\m k -> M.insertWith (+) k 1 m) charCountMap . filter C.isAlpha
+charCounts = foldl (\m k -> M.insertWith (+) k 1 m) charCountMap . map C.toLower . filter C.isAlpha
 
 charFreqs :: String -> M.Map Char Double
 charFreqs = freqs . charCounts
@@ -19,8 +19,9 @@ charFreqs = freqs . charCounts
 englCharFreq :: Char -> Double
 englCharFreq c = M.findWithDefault 0.0 c englCharFreqMap
 
+-- the first list of Doubles should be the expected values.
 chi2 :: [Double] -> [Double] -> Double
-chi2 xs ys = sum $ zipWith (\x y -> (x-y)**2) xs ys
+chi2 xs ys = sum $ zipWith (\x y -> ((x-y)**2)/x) xs ys
 
 englCharChi2 :: String -> Double
 englCharChi2 s = chi2 (M.elems englCharFreqMap) (M.elems $ charFreqs s)

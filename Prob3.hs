@@ -1,16 +1,14 @@
 import Crypto
 import Convert
 import Frequency
-import Data.List.Extras (argminWithMin)
+import Data.List.Extras (argmin, argminWithMin)
 
-
-argApp :: (a -> b) -> a -> (a, b)
-argApp f x = (x, f x)
 
 main :: IO ()
 main = do
     a <- getLine
 
-    print $ map (argApp englCharChi2) $ map (boolsToStrASCII . xors (strToBools16 a) . charToBoolsASCII) "abcdefghijklmnopqrstuvwxyz"
+    print $ argminWithMin (englCharChi2 . boolsToStrASCII . xors (strToBools16 a) . charToBoolsASCII) "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    -- print $ map (englCharChi2 . boolsToStrASCII . xors (strToBools16 a) . charToBoolsASCII) "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     return ()
