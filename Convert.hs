@@ -5,6 +5,7 @@ import qualified Data.Bits as B
 import Data.Word (Word8)
 import qualified Data.Map as M
 import Data.Tuple (swap)
+import Control.Applicative
 
 setBitIf :: Word8 -> (Bool, Int) -> Word8
 setBitIf w (b, i) = if b then B.setBit w i else w
@@ -45,6 +46,9 @@ boolsToStr64 = map boolsToChar64 . chunksOf 6
 boolsToStrASCII :: [Bool] -> String
 boolsToStrASCII = map boolsToCharASCII . chunksOf 8
 
+isValidASCII :: String -> Bool
+isValidASCII s = and ((\c -> c > 31 && c < 127) <$> fromEnum <$> s)
+
 map16CW8 :: M.Map Char Word8
 map16CW8 = M.fromList list16
 
@@ -56,6 +60,9 @@ map64CW8 = M.fromList list64
 
 map64W8C :: M.Map Word8 Char
 map64W8C = M.fromList (map swap list64)
+
+asciiChars :: String
+asciiChars = map toEnum [32..126]
 
 
 list16 :: [(Char, Word8)]

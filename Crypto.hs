@@ -13,8 +13,13 @@ xors bs key = zipWith xor bs (cycle key)
 xorsRecurse :: [Bool] -> [[Bool]] -> [Bool]
 xorsRecurse = foldl xors
 
-bestEnglString :: [String] -> String
-bestEnglString = argmin englCharChi2
+bestEnglString :: [String] -> (String, Double)
+bestEnglString [] = ("", 999999999)
+bestEnglString ss = argminWithMin englCharChi2 . filter isValidASCII $ ss
 
-bestEnglKey :: String -> (Char, Double)
-bestEnglKey s = argminWithMin (englCharChi2 . boolsToStrASCII . xors (strToBools16 s) . charToBoolsASCII) "abcdefghijklmnopqrstuvwxyz"
+bestEnglKey :: String -> [String] -> ((String, String), Double)
+bestEnglKey s = argmin
+        (englCharChi2
+         <<< (boolsToStrASCII ||| boolsToStrASCII)
+         <<< (id &&& xors (strToBools16 s))
+         <<< charToBoolsASCII) "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

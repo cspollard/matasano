@@ -1,12 +1,12 @@
 import Crypto
 import Data.List.Extras (argminWithMin)
-import Control.Monad (liftM)
+import Control.Applicative
 
 main :: IO ()
 main = do
     a <- getLine
-    bs <- liftM lines $ readFile a
+    bs <- lines <$> readFile a
 
-    print $ argminWithMin snd (map bestEnglKey bs)
+    print $ argminWithMin fst (map bestEnglKey bs)
 
     return ()
