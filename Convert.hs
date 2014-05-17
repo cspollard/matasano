@@ -37,6 +37,9 @@ strToBools16 = concatMap charToBools16
 strToBools64 :: String -> [Bool]
 strToBools64 = concatMap charToBools64
 
+strToBoolsASCII :: String -> [Bool]
+strToBoolsASCII = concatMap charToBoolsASCII
+
 boolsToStr16 :: [Bool] -> String
 boolsToStr16 = map boolsToChar16 . chunksOf 4
 
