@@ -41,16 +41,12 @@ rotateV w n = if n > l
 nand :: Bool -> Bool -> Bool
 nand x = not . (&&) x
 
-xor' :: Bool -> Bool -> Bool
-xor' x y = (x `nand` y) && (x || y)
-
-
 instance Bits Bool where
     (.&.) = (&&)
     (.|.) = (||)
     complement = not
 
-    xor = xor'
+    xor x y = (x `nand` y) && (x || y)
 
     shift b 0 = b
     shift _ _ = False

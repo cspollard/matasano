@@ -1,7 +1,13 @@
-module Frequency where
+module English where
 
 import qualified Data.Map as M
 import qualified Data.Char as C
+
+englCharChi2 :: String -> Double
+englCharChi2 s = chi2 (M.elems englCharFreqMap) (M.elems $ charFreqs s)
+
+valid :: String -> Bool
+valid = all (\c -> let x = fromEnum c in x >= 32 && x <= 126)
 
 counts :: Ord a => [a] -> M.Map a Int
 counts = foldl (\m k -> M.insertWith (+) k 1 m) M.empty
@@ -22,9 +28,6 @@ englCharFreq c = M.findWithDefault 0.0 c englCharFreqMap
 -- the first list of Doubles should be the expected values.
 chi2 :: [Double] -> [Double] -> Double
 chi2 xs ys = sum $ zipWith (\x y -> ((x-y)**2)/x) xs ys
-
-englCharChi2 :: String -> Double
-englCharChi2 s = chi2 (M.elems englCharFreqMap) (M.elems $ charFreqs s)
 
 englCharFreqMap :: M.Map Char Double
 englCharFreqMap = M.fromList englCharFreqList

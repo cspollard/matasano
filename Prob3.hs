@@ -1,14 +1,19 @@
 import Crypto
-import Convert
-import Frequency
-import Data.List.Extras (argmin, argminWithMin)
+import Base16 as B16
+import ASCII as ASCII
+import English
+import Data.List.Extras (argmin)
+import Control.Applicative ((<$>), (<*>))
 
 
 main :: IO ()
 main = do
-    a <- getLine
+    let toWordN = return . B16.pack . map B16.fromChar
+    dat <- toWordN =<< getLine
 
-    print $ argminWithMin (englCharChi2 . boolsToStrASCII . xors (strToBools16 a) . charToBoolsASCII) "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    -- print $ map (englCharChi2 . boolsToStrASCII . xors (strToBools16 a) . charToBoolsASCII) "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    let keys = map ASCII.fromChar alphabet
 
-    return ()
+    let xord = fmap (flip xorKey dat) keys
+    let strs = filter valid $ (map ASCII.toChar . ASCII.unpack) <$> xord
+
+    print $ argmin englCharChi2 strs
