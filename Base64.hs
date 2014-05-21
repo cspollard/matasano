@@ -1,33 +1,34 @@
 module Base64 where
 
--- UGGGH. Need to deal with bit packing (64 = 6 bytes).
-
-import qualified Data.ByteString.Lazy as BS
-import Data.ByteString.Lazy (ByteString)
+import WordN
 import qualified Data.Map as M
 import Data.Tuple (swap)
-import Data.Word
+import Data.Word (Word8)
+import Data.List.Split (chunksOf)
+import qualified Data.Vector as V (fromList, toList, concat)
 
-fromBase64 :: String -> ByteString
-fromBase64 = BS.pack . map w8FromBase64
+toChar :: WordN -> Char
+toChar w = toMap M.! toBits w
 
-toBase64 :: ByteString -> String
-toBase64 = map w8ToBase64 . BS.unpack
+fromChar :: Char -> WordN
+fromChar c = fromBits 6 $ fromMap M.! c
 
-w8ToBase64 :: Word8 -> Char
-w8ToBase64 w = toBase64Map M.! w
+unpack :: WordN -> [WordN]
+unpack = reverse . map V.fromList . chunksOf 6 . V.toList
 
-w8FromBase64 :: Char -> Word8
-w8FromBase64 c = fromBase64Map M.! c
+pack :: [WordN] -> WordN
+pack = V.concat . reverse
 
-fromBase64Map :: M.Map Char Word8
-fromBase64Map = M.fromList encodeBase64
+-- internal
 
-toBase64Map :: M.Map Word8 Char
-toBase64Map = M.fromList (map swap encodeBase64)
+fromMap :: M.Map Char Word8
+fromMap = M.fromList encoding
 
-encodeBase64 :: [(Char, Word8)]
-encodeBase64 = 
+toMap :: M.Map Word8 Char
+toMap = M.fromList (map swap encoding)
+
+encoding :: [(Char, Word8)]
+encoding =
     [('A', 0), ('B', 1), ('C', 2), ('D', 3),
      ('E', 4), ('F', 5), ('G', 6), ('H', 7),
      ('I', 8), ('J', 9), ('K', 10), ('L', 11),

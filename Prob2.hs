@@ -1,9 +1,11 @@
-import Crypto
-import Convert
+import Base16 as B16
+import Data.Bits (xor)
 
 main :: IO ()
 main = do
-    a <- getLine
-    b <- getLine
+    let to16 = return . B16.pack . map B16.fromChar 
+    a <- to16 =<< getLine
+    b <- to16 =<< getLine
+    let c = a `xor` b
 
-    putStrLn $ boolsToStr16 $ zipWith xor (strToBools16 a) (strToBools16 b)
+    print $ map B16.toChar . B16.unpack $ c

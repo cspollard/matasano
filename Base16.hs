@@ -1,54 +1,38 @@
-module Hex where
+module Base16 where
 
--- UGGGH. Need to deal with bit packing (16 = 4 bytes).
-
-import qualified Data.ByteString.Lazy as BS
-import Data.ByteString.Lazy (ByteString)
+import WordN
 import qualified Data.Map as M
 import Data.Tuple (swap)
-import Data.Word
+import Data.Word (Word8)
+import Data.List.Split (chunksOf)
+import qualified Data.Vector as V (fromList, toList, concat)
 
-fromHex :: String -> ByteString
-fromHex = BS.pack . map w8FromHex
+toChar :: WordN -> Char
+toChar w = toMap M.! toBits w
 
-toHex :: ByteString -> String
-toHex = map w8ToHex . BS.unpack
+fromChar :: Char -> WordN
+fromChar c = fromBits 4 $ fromMap M.! c
 
-w8ToHex :: Word8 -> Char
-w8ToHex w = toHexMap M.! w
+unpack :: WordN -> [WordN]
+unpack = reverse . map V.fromList . chunksOf 4 . V.toList
 
-w8FromHex :: Char -> Word8
-w8FromHex c = fromHexMap M.! c
+pack :: [WordN] -> WordN
+pack = V.concat . reverse
 
-fromHexMap :: M.Map Char Word8
-fromHexMap = M.fromList encodeHex
+-- internal
 
-toHexMap :: M.Map Word8 Char
-toHexMap = M.fromList (map swap encodeHex)
+fromMap :: M.Map Char Word8
+fromMap = M.fromList encoding
 
-encodeHex :: [(Char, Word8)]
-encodeHex = 
-    [('0', 0),
-     ('1', 1),
-     ('2', 2),
-     ('3', 3),
-     ('4', 4),
-     ('5', 5),
-     ('6', 6),
-     ('7', 7),
-     ('8', 8),
-     ('9', 9),
+toMap :: M.Map Word8 Char
+toMap = M.fromList (map swap encoding)
 
-     ('A', 10),
-     ('B', 11),
-     ('C', 12),
-     ('D', 13),
-     ('E', 14),
-     ('F', 15),
+encoding :: [(Char, Word8)]
+encoding = 
+    [('0', 0), ('1', 1), ('2', 2), ('3', 3),
+     ('4', 4), ('5', 5), ('6', 6), ('7', 7),
+     ('8', 8), ('9', 9), ('A', 10), ('B', 11),
+     ('C', 12), ('D', 13), ('E', 14), ('F', 15),
 
-     ('a', 10),
-     ('b', 11),
-     ('c', 12),
-     ('d', 13),
-     ('e', 14),
-     ('f', 15)]
+     ('a', 10), ('b', 11), ('c', 12), ('d', 13),
+     ('e', 14), ('f', 15)]
