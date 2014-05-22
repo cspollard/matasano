@@ -1,9 +1,12 @@
 import Crypto
-import Base16 as B16
-import ASCII as ASCII
+import qualified Base16 as B16
+import qualified ASCII as ASCII
 import English
 import Data.List.Extras (argmin)
-import Control.Applicative ((<$>), (<*>))
+import Control.Applicative ((<$>))
+import System.Environment (getArgs)
+import Data.List (sort)
+import Control.Arrow ((&&&))
 
 
 main :: IO ()
@@ -16,4 +19,8 @@ main = do
     let xord = fmap (flip xorKey dat) keys
     let strs = filter valid $ (map ASCII.toChar . ASCII.unpack) <$> xord
 
-    print $ argmin englCharChi2 strs
+    dict <- loadDict =<< return . head =<< getArgs
+
+    case dict of
+        Left s -> print s
+        Right d -> print $ reverse . sort $ map (charChi2 d &&& id) strs
