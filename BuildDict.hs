@@ -1,4 +1,4 @@
-import English
+import Data.Crypto.English
 import System.Environment (getArgs)
 import qualified Data.Map as M
 import Data.List (foldl')
@@ -29,8 +29,10 @@ main = do
 
     indata <- liftM concat $ mapM readFile finnames
 
-    print $ getProbDict indata
+    let d = getProbDict indata
 
-    let outdata = encode $ getProbDict indata
+    print d
+
+    let outdata = encode d
 
     BS.writeFile foutname outdata

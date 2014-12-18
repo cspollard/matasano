@@ -1,24 +1,22 @@
-import Crypto
-import qualified Base16 as B16
-import qualified ASCII
-import English
 import System.Environment (getArgs)
-import Data.List (sortBy)
-import Control.Arrow ((&&&))
+import qualified Data.ByteString.Lazy.Char8 as CH8
+import qualified Data.ByteString.Base16.Lazy as B16
+import qualified Data.ByteString.Lazy as BSL
+import Data.Crypto.ByteString
+import Data.Crypto.English
+import Data.Crypto.Frequency
 
 
 main :: IO ()
 main = do
-    let toWordN = return . B16.pack . map B16.fromChar
-    dat <- toWordN =<< getLine
+    bs <- fmap (fst . B16.decode . CH8.pack . head) getArgs
 
-    let keys = map ASCII.fromChar [' '..'~']
+    -- all letters can be keys.
+    let keys = map (CH8.pack . flip (:) []) [' '..'~']
 
-    let xord = map (`xorKey` dat) keys
-    let strs = filter valid $ map (map ASCII.toChar . ASCII.unpack) xord
+    -- apply xor with each key
+    let xoredStrings = filter validEnglish $ map (CH8.unpack . flip xorBS bs) keys
 
-    dict <- loadDict =<< return . head =<< getArgs
+    let chi2s = map (\s -> (charChi2 engFreqMap s, s)) xoredStrings
 
-    case dict of
-        Left s -> print s
-        Right d -> print $ sortBy (flip compare) $ map (charChi2 d &&& id) strs
+    print . minimum $ chi2s

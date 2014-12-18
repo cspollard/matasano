@@ -1,4 +1,4 @@
-module English where
+module Data.Crypto.English where
 
 import qualified Data.Map as M
 import qualified Data.Char as C
@@ -8,8 +8,8 @@ import Data.Serialize (decode)
 charChi2 :: M.Map Char Double -> String -> Double
 charChi2 m s = chi2 (M.elems m) (M.elems $ charFreqs s)
 
-valid :: String -> Bool
-valid = all (\c -> c >= ' ' && c <= '~')
+validEnglish :: String -> Bool
+validEnglish = all (\c -> c >= ' ' && c <= '~')
 
 counts :: Ord a => [a] -> M.Map a Int
 counts = foldl (\m k -> M.insertWith (+) k 1 m) M.empty
