@@ -1,11 +1,12 @@
-import Base16 as B16
-import Data.Bits (xor)
+{-# LANGUAGE OverloadedStrings #-}
+
+import qualified Data.ByteString.Base16.Lazy as B16
+import qualified Data.ByteString.Lazy.Char8 as CH8
+import Data.Crypto.ByteString
+import System.Environment (getArgs)
 
 main :: IO ()
 main = do
-    let toWordN = return . B16.pack . map B16.fromChar 
-    a <- toWordN =<< getLine
-    b <- toWordN =<< getLine
-    let c = a `xor` b
+    bs:key:_ <- map (fst . B16.decode . CH8.pack) `fmap` getArgs
 
-    print $ map B16.toChar . B16.unpack $ c
+    print . B16.encode $ xorBS bs key
