@@ -1,7 +1,6 @@
 import System.Environment (getArgs)
 import qualified Data.ByteString.Lazy.Char8 as CH8
 import qualified Data.ByteString.Base16.Lazy as B16
-import qualified Data.ByteString.Lazy as BSL
 import Data.Crypto.ByteString
 import Data.Crypto.English
 import Data.Crypto.Frequency
