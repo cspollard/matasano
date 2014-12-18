@@ -1,8 +1,6 @@
-import Base64 as B64
-import Base16 as B16
+import Data.ByteString.Base16.Lazy as B16
+import Data.ByteString.Base64.Lazy as B64
+import Data.ByteString.Lazy as BSL
 
 main :: IO ()
-main = do
-    let conv16To64 = map B64.toChar . B64.unpack . B16.pack . map B16.fromChar
-
-    print . conv16To64 =<< getLine
+main = print . B64.encode . fst . B16.decode =<< BSL.getContents
