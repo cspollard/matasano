@@ -1,9 +1,10 @@
 import System.Environment (getArgs)
 import qualified Data.ByteString.Lazy.Char8 as CH8
 import qualified Data.ByteString.Base16.Lazy as B16
+import qualified Data.ByteString.Lazy as BSL
 import Data.Crypto.ByteString
 import Data.Crypto.English
-import Data.Crypto.Frequency
+import Data.List (sort)
 
 
 main :: IO ()
@@ -11,11 +12,11 @@ main = do
     bs <- fmap (fst . B16.decode . CH8.pack . head) getArgs
 
     -- all letters can be keys.
-    let keys = map (CH8.pack . flip (:) []) [' '..'~']
+    let keys = map (BSL.pack . flip (:) []) [0..255]
 
     -- apply xor with each key
     let xoredStrings = filter validEnglish $ map (CH8.unpack . flip xorBS bs) keys
 
-    let chi2s = map (\s -> (charChi2 engFreqMap s, s)) xoredStrings
+    let chi2s = map (\s -> (engChi2 s, s)) xoredStrings
 
-    print . minimum $ chi2s
+    print . sort $ chi2s
