@@ -19,6 +19,8 @@ main = do
     -- all letters can be keys.
     let keys = map (BSL.pack . flip (:) []) [0..255]
 
+    print keys
+
     let xoredStrings = map CH8.unpack [xorBS k bs | k <- keys, bs <- bss]
 
     print xoredStrings
